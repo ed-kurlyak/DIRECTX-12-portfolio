@@ -511,21 +511,17 @@ void CMeshManager::Create_RootSignature()
 	CD3DX12_DESCRIPTOR_RANGE cbvTable0;
 	cbvTable0.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 0);
 
-	CD3DX12_DESCRIPTOR_RANGE cbvTable1;
-	cbvTable1.Init(D3D12_DESCRIPTOR_RANGE_TYPE_CBV, 1, 1);
-
 	CD3DX12_DESCRIPTOR_RANGE srvTable;
 	srvTable.Init(D3D12_DESCRIPTOR_RANGE_TYPE_SRV, 1, 0);
 	
-	CD3DX12_ROOT_PARAMETER slotRootParameter[3];
+	CD3DX12_ROOT_PARAMETER slotRootParameter[2];
 
 	slotRootParameter[0].InitAsDescriptorTable(1, &cbvTable0);
-	slotRootParameter[1].InitAsDescriptorTable(1, &cbvTable1);
-	slotRootParameter[2].InitAsDescriptorTable(1, &srvTable);
+	slotRootParameter[1].InitAsDescriptorTable(1, &srvTable);
 
 	auto staticSamplers = GetStaticSamplers();
 
-	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(3, slotRootParameter,
+	CD3DX12_ROOT_SIGNATURE_DESC rootSigDesc(2, slotRootParameter,
 		(UINT)staticSamplers.size(), staticSamplers.data(),
 		D3D12_ROOT_SIGNATURE_FLAG_ALLOW_INPUT_ASSEMBLER_INPUT_LAYOUT);
 
@@ -748,7 +744,7 @@ void CMeshManager::DrawRenderItems_Ñube(ID3D12GraphicsCommandList* CmdList)
 	ID3D12DescriptorHeap* DescriptorHeapsSrv[] = { m_SrvDescriptorHeap.Get() };
 	m_CommandList->SetDescriptorHeaps(_countof(DescriptorHeapsSrv), DescriptorHeapsSrv);
 
-	CmdList->SetGraphicsRootDescriptorTable(2, m_SrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
+	CmdList->SetGraphicsRootDescriptorTable(1, m_SrvDescriptorHeap->GetGPUDescriptorHandleForHeapStart());
 
 	CmdList->DrawIndexedInstanced(
 		g_BoxGeo->DrawArgs["box"].IndexCount,
