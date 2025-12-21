@@ -848,7 +848,7 @@ void CMeshManager::DrawRenderItems_Ñube(ID3D12GraphicsCommandList* CmdList, cons
 		auto cbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_CbvHeap->GetGPUDescriptorHandleForHeapStart());
 		cbvHandle.Offset(cbvIndex, m_CbvSrvUavDescriptorSize);
 
-		CmdList->SetGraphicsRootDescriptorTable(0, cbvHandle);
+		CmdList->SetGraphicsRootDescriptorTable(1, cbvHandle);
 
 		ID3D12DescriptorHeap* DescriptorHeapsSrv[] = { m_SrvDescriptorHeap.Get() };
 		m_CommandList->SetDescriptorHeaps(_countof(DescriptorHeapsSrv), DescriptorHeapsSrv);
@@ -888,7 +888,7 @@ void CMeshManager::Draw_MeshManager()
 	int PassCbvIndex = m_PassCbvOffset + m_CurrFrameResourceIndex;
 	auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_CbvHeap->GetGPUDescriptorHandleForHeapStart());
 	passCbvHandle.Offset(PassCbvIndex, m_CbvSrvUavDescriptorSize);
-	m_CommandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
+	m_CommandList->SetGraphicsRootDescriptorTable(0, passCbvHandle);
 
 	DrawRenderItems_Ñube(m_CommandList.Get(), m_AllRitems);
 

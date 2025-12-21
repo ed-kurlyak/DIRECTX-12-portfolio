@@ -8,14 +8,14 @@ SamplerState gsamAnisotropicWrap  : register(s4);
 SamplerState gsamAnisotropicClamp  : register(s5);
 
 
-cbuffer cbPerObject : register(b0)
-{
-	float4x4 gWorld; 
-};
-
-cbuffer cbPass : register(b1)
+cbuffer cbPass : register(b0)
 {
 	float4x4 gViewProj; 
+};
+
+cbuffer cbPerObject : register(b1)
+{
+	float4x4 gWorld; 
 };
 
 struct VertexIn
