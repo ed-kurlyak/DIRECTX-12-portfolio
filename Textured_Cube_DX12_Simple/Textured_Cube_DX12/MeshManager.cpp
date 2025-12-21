@@ -776,7 +776,7 @@ void CMeshManager::Draw_MeshManager()
 	m_CommandList->SetDescriptorHeaps(_countof(DescriptorHeapsCbv), DescriptorHeapsCbv);
 
 	auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_CbvHeap->GetGPUDescriptorHandleForHeapStart());
-	m_CommandList->SetGraphicsRootDescriptorTable(1, passCbvHandle);
+	m_CommandList->SetGraphicsRootDescriptorTable(0, passCbvHandle);
 
 	DrawRenderItems_Ñube(m_CommandList.Get());
 
