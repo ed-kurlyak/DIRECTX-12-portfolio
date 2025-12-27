@@ -482,19 +482,31 @@ void CMeshManager::Create_Cube_Geometry_Pass1()
 
 void CMeshManager::Create_Render_Items()
 {
-	auto boxRitem = std::make_unique<RenderItem>();
+	auto boxRitem1 = std::make_unique<RenderItem>();
 
 	//XMStoreFloat4x4(&boxRitem->World, DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f));
-	boxRitem->World = Identity4x4();
-	boxRitem->ObjCBIndex = 0;
-	boxRitem->Geo = m_Cube.get();
-	boxRitem->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	//boxRitem->PrimitiveType = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
-	boxRitem->IndexCount = m_Cube->DrawArgs["box"].IndexCount;
-	boxRitem->StartIndexLocation = m_Cube->DrawArgs["box"].StartIndexLocation;
-	boxRitem->BaseVertexLocation = m_Cube->DrawArgs["box"].BaseVertexLocation;
-	
-	m_AllRitems.push_back(std::move(boxRitem));
+	boxRitem1->World = Identity4x4();
+	boxRitem1->ObjCBIndex = 0;
+	boxRitem1->Geo = m_Cube.get();
+	boxRitem1->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	boxRitem1->IndexCount = m_Cube->DrawArgs["box"].IndexCount;
+	boxRitem1->StartIndexLocation = m_Cube->DrawArgs["box"].StartIndexLocation;
+	boxRitem1->BaseVertexLocation = m_Cube->DrawArgs["box"].BaseVertexLocation;
+
+	m_AllRitems.push_back(std::move(boxRitem1));
+
+	auto boxRitem2 = std::make_unique<RenderItem>();
+
+	//XMStoreFloat4x4(&boxRitem->World, DirectX::XMMatrixScaling(1.0f, 1.0f, 1.0f) * DirectX::XMMatrixTranslation(0.0f, 0.0f, 0.0f));
+	boxRitem2->World = Identity4x4();
+	boxRitem2->ObjCBIndex = 1;
+	boxRitem2->Geo = m_Cube.get();
+	boxRitem2->PrimitiveType = D3D_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+	boxRitem2->IndexCount = m_Cube->DrawArgs["box"].IndexCount;
+	boxRitem2->StartIndexLocation = m_Cube->DrawArgs["box"].StartIndexLocation;
+	boxRitem2->BaseVertexLocation = m_Cube->DrawArgs["box"].BaseVertexLocation;
+
+	m_AllRitems.push_back(std::move(boxRitem2));
 }
 
 void CMeshManager::Create_Frame_Resources()
@@ -529,6 +541,7 @@ void CMeshManager::Create_ConstBuff_Descriptors_Heap_And_View()
 	for (int frameIndex = 0; frameIndex < m_NumFrameResources; ++frameIndex)
 	{
 		auto objectCB = m_FrameResources[frameIndex]->ObjectCB->Resource();
+		
 		for (UINT i = 0; i < objCount; ++i)
 		{
 			D3D12_GPU_VIRTUAL_ADDRESS cbAddress = objectCB->GetGPUVirtualAddress();
@@ -750,7 +763,7 @@ void CMeshManager::Init_MeshManager(HWND hWnd)
 
 	Execute_Init_Commands();
 
-	DirectX::XMVECTOR Pos = DirectX::XMVectorSet(0, 0.0f, -8.0f, 1.0f);
+	DirectX::XMVECTOR Pos = DirectX::XMVectorSet(0, 0.0f, -9.0f, 1.0f);
 	DirectX::XMVECTOR Target = DirectX::XMVectorZero();
 	DirectX::XMVECTOR Up = DirectX::XMVectorSet(0.0f, 1.0f, 0.0f, 0.0f);
 
@@ -777,6 +790,15 @@ void CMeshManager::Update_MeshManager()
 	DirectX::XMMATRIX RotX = DirectX::XMMatrixRotationX(Angle);
 	DirectX::XMFLOAT4X4 MatWorldX;
 	DirectX::XMStoreFloat4x4(&MatWorldX, RotX);
+	
+
+	DirectX::XMMATRIX MatTranslate1 = DirectX::XMMatrixTranslation(-2.0f, 0, 0);
+	DirectX::XMFLOAT4X4 MatWorldTranslate1;
+	DirectX::XMStoreFloat4x4(&MatWorldTranslate1, MatTranslate1);
+
+	DirectX::XMMATRIX MatTranslate2 = DirectX::XMMatrixTranslation(2.0f, 0, 0);
+	DirectX::XMFLOAT4X4 MatWorldTranslate2;
+	DirectX::XMStoreFloat4x4(&MatWorldTranslate2, MatTranslate2);
 
 	Angle += ElapsedTime / 5.0f;
 	if (Angle > DirectX::XM_PI * 2.0f)
@@ -784,7 +806,12 @@ void CMeshManager::Update_MeshManager()
 
 	DirectX::XMMATRIX WorldY = XMLoadFloat4x4(&MatWorldY);
 	DirectX::XMMATRIX WorldX = XMLoadFloat4x4(&MatWorldX);
-	DirectX::XMMATRIX World = WorldX * WorldY;
+	DirectX::XMMATRIX WorldTransl1 = XMLoadFloat4x4(&MatWorldTranslate1);
+	DirectX::XMMATRIX WorldTransl2 = XMLoadFloat4x4(&MatWorldTranslate2);
+	//DirectX::XMMATRIX World = WorldX * WorldY;
+	DirectX::XMMATRIX World[2];
+	World[0] = WorldX * WorldY * WorldTransl1;
+	World[1] = WorldX * WorldY * WorldTransl2;
 	DirectX::XMMATRIX Proj = XMLoadFloat4x4(&m_Proj);
 	DirectX::XMMATRIX MatView = XMLoadFloat4x4(&m_View);
 
@@ -811,7 +838,8 @@ void CMeshManager::Update_MeshManager()
 			//DirectX::XMMATRIX World = XMLoadFloat4x4(&e->World);
 
 			ObjectConstants ObjConstants;
-			DirectX::XMStoreFloat4x4(&ObjConstants.World, DirectX::XMMatrixTranspose(World));
+			//DirectX::XMStoreFloat4x4(&ObjConstants.World, DirectX::XMMatrixTranspose(World));
+			DirectX::XMStoreFloat4x4(&ObjConstants.World, DirectX::XMMatrixTranspose(World[e->ObjCBIndex]));
 
 			currObjectCB->CopyData(e->ObjCBIndex, ObjConstants);
 
