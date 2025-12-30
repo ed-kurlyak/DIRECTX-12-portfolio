@@ -772,12 +772,6 @@ void CMeshManager::Draw_MeshManager()
 
 	m_CommandList->SetGraphicsRootSignature(m_RootSignature.Get());
 
-	ID3D12DescriptorHeap* DescriptorHeapsCbv[] = { m_CbvHeap.Get() };
-	m_CommandList->SetDescriptorHeaps(_countof(DescriptorHeapsCbv), DescriptorHeapsCbv);
-
-	auto passCbvHandle = CD3DX12_GPU_DESCRIPTOR_HANDLE(m_CbvHeap->GetGPUDescriptorHandleForHeapStart());
-	m_CommandList->SetGraphicsRootDescriptorTable(0, passCbvHandle);
-
 	DrawRenderItems_Ñube(m_CommandList.Get());
 
 	m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
