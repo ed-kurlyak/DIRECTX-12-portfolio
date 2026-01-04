@@ -637,8 +637,6 @@ void CMeshManager::Update_MeshManager()
 void CMeshManager::DrawRenderItems_Ñube(ID3D12GraphicsCommandList* CmdList)
 {
 
-	UINT ObjCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
-
 	CmdList->IASetVertexBuffers(0, 1, &g_BoxGeo->VertexBufferView());
 	CmdList->IASetIndexBuffer(&g_BoxGeo->IndexBufferView());
 	CmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
@@ -668,7 +666,6 @@ void CMeshManager::Draw_MeshManager()
 
 	m_CommandList->ResourceBarrier(1, &CD3DX12_RESOURCE_BARRIER::Transition(CurrentBackBuffer(),
 		D3D12_RESOURCE_STATE_PRESENT, D3D12_RESOURCE_STATE_RENDER_TARGET));
-
 
 	float ClearColor1[4] = { 0.0f, 0.125f, 0.3f, 1.0f };
 	m_CommandList->ClearRenderTargetView(CurrentBackBufferView(), ClearColor1, 0, nullptr);

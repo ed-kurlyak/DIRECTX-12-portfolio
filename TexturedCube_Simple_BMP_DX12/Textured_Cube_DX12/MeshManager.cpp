@@ -731,8 +731,6 @@ void CMeshManager::Update_MeshManager()
 void CMeshManager::DrawRenderItems_Ñube(ID3D12GraphicsCommandList* CmdList)
 {
 
-	UINT ObjCBByteSize = d3dUtil::CalcConstantBufferByteSize(sizeof(ObjectConstants));
-
 	CmdList->IASetVertexBuffers(0, 1, &g_BoxGeo->VertexBufferView());
 	CmdList->IASetIndexBuffer(&g_BoxGeo->IndexBufferView());
 	CmdList->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
